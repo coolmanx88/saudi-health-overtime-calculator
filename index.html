@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 <html dir="rtl" lang="ar"><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>حاسبة خارج الدوام والتقاعد وبدل التميز</title><style>*{box-sizing:border-box}body{margin:0;font:16px/1.65 "Segoe UI",Tahoma,sans-serif;background:#f3f6f5;color:#143e39}header{background:#12443e;color:white;padding:20px max(5vw,16px)}header h1{font-size:clamp(23px,4vw,36px);margin:0}header p{margin:0;color:#e3eee9}nav{display:flex;gap:6px;padding:12px max(5vw,16px);background:white;border-bottom:1px solid #d4ded9}button{font:inherit;cursor:pointer;border:1px solid #b9ccc4;background:white;color:#15473d;border-radius:8px;padding:7px 14px}button[aria-pressed=true]{background:#155649;color:white}iframe{display:block;border:0;width:100%;height:80vh}iframe[hidden]{display:none}</style><header><h1>حاسبة خارج الدوام والتقاعد وبدل التميز</h1><p>إعداد أنس العضيبي</p></header>
+<div class="mobilePagePicker"><label for="mobilePageSelect">الصفحة</label><select id="mobilePageSelect" aria-label="اختيار الحاسبة"><option value="0">خارج الدوام</option><option value="1">التقاعد وتبادل المنافع</option><option value="2">حساب معاش نظام واحد</option><option value="3">بدل التميز</option></select></div>
 <nav aria-label="اختيار الحاسبة"><button aria-pressed="true">خارج الدوام</button><button aria-pressed="false">التقاعد وتبادل المنافع</button><button aria-pressed="false">حساب معاش نظام واحد</button><button aria-pressed="false">بدل التميز</button></nav>
 <iframe srcdoc="&lt;!doctype html&gt;&lt;html lang=&quot;ar&quot; dir=&quot;rtl&quot;&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1&quot;&gt;&lt;meta property=&quot;og:title&quot; content=&quot;حاسبة خارج الدوام&quot;&gt;
 &lt;meta property=&quot;og:description&quot; content=&quot;احسب مكافأة خارج الدوام لموظفي وزارة الصحة السعودية حسب نظام التوظيف والراتب والبدلات وساعات التكليف.&quot;&gt;
@@ -373,8 +374,17 @@ function calculate(){let system=$('system').value,start,end,salary=+$('salary').
 nav[aria-label="اختيار الحاسبة"]{flex-wrap:wrap;position:sticky;top:0;z-index:20;box-shadow:0 2px 8px #103f3412}
 nav[aria-label="اختيار الحاسبة"] button{transition:background .15s,color .15s;white-space:normal}
 nav[aria-label="اختيار الحاسبة"] button:focus-visible{outline:3px solid #bf9854;outline-offset:2px}
+.mobilePagePicker{display:none}
 iframe[hidden]{display:none!important}
-@media(max-width:600px){nav[aria-label="اختيار الحاسبة"] button{flex:1 1 100%;text-align:center}}
+@media(max-width:600px){
+  body>header{padding:14px 18px}
+  body>header h1{font-size:24px;line-height:1.45}
+  nav[aria-label="اختيار الحاسبة"]{display:none!important}
+  .mobilePagePicker{display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:20;padding:9px 14px;background:white;border-bottom:1px solid #d4ded9;box-shadow:0 2px 8px #103f3412}
+  .mobilePagePicker label{font-weight:700;white-space:nowrap;color:#174d44}
+  .mobilePagePicker select{width:100%;min-width:0;height:44px;margin:0;padding:6px 12px;border:1px solid #9fb8b0;border-radius:10px;background:#f7faf9;color:#15473d;font:700 16px/1.4 "Segoe UI",Tahoma,sans-serif}
+  iframe{height:calc(100vh - 62px)}
+}
 </style>
 <script>
 (function(){
@@ -382,6 +392,7 @@ iframe[hidden]{display:none!important}
   const nav=document.querySelector('nav[aria-label="اختيار الحاسبة"]');
   const tabs=Array.from(nav.querySelectorAll('button'));
   const pages=Array.from(document.querySelectorAll('iframe[srcdoc]'));
+  const mobileSelect=document.getElementById('mobilePageSelect');
   if(tabs.length!==pages.length){console.error('عدد الأزرار لا يطابق عدد الحاسبات');return;}
   function activate(index){
     tabs.forEach((tab,i)=>{
@@ -391,6 +402,7 @@ iframe[hidden]{display:none!important}
       pages[i].hidden=!active;
       pages[i].setAttribute('aria-hidden',String(!active));
     });
+    if(mobileSelect)mobileSelect.value=String(index);
   }
   pages.forEach((page,i)=>{page.id='calculator-page-'+i;page.setAttribute('loading','eager')});
   tabs.forEach((tab,i)=>{
@@ -404,6 +416,7 @@ iframe[hidden]{display:none!important}
       activate(next);tabs[next].focus();
     });
   });
+  if(mobileSelect)mobileSelect.addEventListener('change',()=>activate(Number(mobileSelect.value)));
   activate(0);
 })();
 </script>
